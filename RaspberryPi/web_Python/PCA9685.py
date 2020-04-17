@@ -26,10 +26,11 @@ class PCA9685:
   __ALLLED_OFF_L       = 0xFC
   __ALLLED_OFF_H       = 0xFD
 
-  def __init__(self, address=0x40, debug=False):
+  def __init__(self, address=0x40, freq = 50, debug=False):
     self.bus = smbus.SMBus(1)
     self.address = address
     self.debug = debug
+    self.freq = freq
     if (self.debug):
       print("Reseting PCA9685")
     self.write(self.__MODE1, 0x00)
@@ -49,12 +50,13 @@ class PCA9685:
 	
   def setPWMFreq(self, freq):
     "Sets the PWM frequency"
+    self.freq = freq
     prescaleval = 25000000.0    # 25MHz
     prescaleval /= 4096.0       # 12-bit
-    prescaleval /= float(freq)
+    prescaleval /= float(self.freq)
     prescaleval -= 1.0
     if (self.debug):
-      print("Setting PWM frequency to %d Hz" % freq)
+      print("Setting PWM frequency to %d Hz" % self.freq)
       print("Estimated pre-scale: %d" % prescaleval)
     prescale = math.floor(prescaleval + 0.5)
     if (self.debug):
@@ -79,7 +81,7 @@ class PCA9685:
 	  
   def setServoPulse(self, channel, pulse):
     "Sets the Servo Pulse,The PWM frequency must be 50HZ"
-    pulse = pulse*4096/20000        #PWM frequency is 50HZ,the period is 20000us
+    pulse = pulse*4096*self.freq/1000000        #PWM frequency is 50HZ,the period is 20000us
     self.setPWM(channel, 0, pulse)
     
   def start_PCA9685(self):
