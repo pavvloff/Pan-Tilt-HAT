@@ -86,10 +86,8 @@ class PlatformControl(threading.Thread):
     if (v_move or h_move):
       self.startMotor()
 
-    if h_move:
-      self.pwm.setServoPulse(HORIZONTAL_MOTOR, int(round(self.horizontal.value)))
-    if v_move:
-      self.pwm.setServoPulse(VERTICAL_MOTOR, int(round(self.vertical.value)))
+    self.pwm.setServoPulse(HORIZONTAL_MOTOR, int(round(self.horizontal.value)))
+    self.pwm.setServoPulse(VERTICAL_MOTOR, int(round(self.vertical.value)))
 
   def stopMotor(self):
     if self.moving:
