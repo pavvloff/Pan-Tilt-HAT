@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pan-Tilt HAT</title>
+  <link href="/static/bootstrap.min.css" rel="stylesheet" media="screen"> 
+  <script src="/static/jquery.js"></script>
+    <script>
+    
+$(function(){
+  var isTouchDevice = "ontouchstart" in document.documentElement ? true : false;
+  var BUTTON_DOWN   = isTouchDevice ? "touchstart" : "mousedown";
+  var BUTTON_UP     = isTouchDevice ? "touchend"   : "mouseup";
+
+  $("button").bind(BUTTON_DOWN,function(){
+    $.post("/cmd",this.id,function(data,status){});
+  });
+
+  $("button").bind(BUTTON_UP,function(){
+    $.post("/cmd","stop",function(data,status){});
+  });
+});
+    
+    </script>
+
+  <style type="text/css">
+    button {
+      margin: 10px 15px 10px 15px;
+      width: 50px;
+      height: 50px;
+    }
+    input {
+      margin: 10px 15px 10px 15px;
+      width: 50px;
+      height: 50px;
+    }
+</style>
+  
+</head>
+<body>
+<div id="container" class="container" align="center">
+  <div style="width:60%; height:40px; line-height:40px; text-align:center; font-size:20px; color:white; background-color:blue; margin:auto">
+  Pan-Tilt HAT Web Control
+  </div><br><br>
+  
+  <table align="center">
+    <tr>
+      <td align="center"><b>Servo Control</b></td>
+    </tr>
+    <tr>
+      <td>
+        <div align="center">
+          <button id="up" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-up"></button>
+        </div>
+        <div align="center">
+          <button id='left' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-left"></button>
+          <!--<button id='stop' class="btn btn-lg btn-primary glyphicon glyphicon-stop"></button>-->
+          <button id='down' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down"></button>
+          <button id='right' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-right"></button>
+        </div align="center">
+        <!-- </div> -->
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>
