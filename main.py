@@ -19,10 +19,7 @@ def main():
 
     app.run(server=server)
   except Exception as ex:
-    print(ex)
-    # Don't restart on an exception.
-    # TODO add exception serving here, and another option for refresh
-    exit(1)
+    raise ex
 
   if command == "refresh":
     exit(-1)

@@ -120,11 +120,11 @@ class PlatformControl(threading.Thread):
 
 platform = None
 
-def runCameraView(app, freq = 50):
+def runCameraView(app, root):
 
   global platform
 
-  platform = PlatformControl(freq)
+  platform = PlatformControl()
   #platform.start()
 
   @app.get('/')
