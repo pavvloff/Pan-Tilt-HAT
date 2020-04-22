@@ -143,7 +143,7 @@ class PlatformControl(threading.Thread):
 platform = None
 
 def runCameraView(app, root):
-
+  global platform
   platform = PlatformControl()
   platform.start()
 

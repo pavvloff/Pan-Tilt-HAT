@@ -20,12 +20,8 @@ def main():
   app.run(server=server)
 
   print(server.command)
-  try:
-    # Trying to peacefully 
-    platform.command = 'exit'
-    time.sleep(0.2)
-  except AttributeError as er:
-    pass
+  platform.command = 'exit'
+  time.sleep(0.2)
 
   if server.command == "refresh":
     exit(255)
