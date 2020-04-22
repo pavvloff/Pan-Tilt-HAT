@@ -20,7 +20,7 @@ def main():
 
   print(server.command)
   if server.command == "refresh":
-    exit(-1)
+    exit(255)
   else:
     exit(0)
 
