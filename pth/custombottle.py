@@ -13,5 +13,6 @@ class StoppableServer(ServerAdapter):
         self.server.serve_forever()
 
     def stop(self):
+    	print('stopping server...')
         # self.server.server_close() <--- alternative but causes bad fd exception
         self.server.shutdown()

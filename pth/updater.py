@@ -12,6 +12,7 @@ def runUpdaterView(app, srv, root = '.'):
     global server
     global command
     command = bottle.request.body.read().decode()
+    print(command)
     if command == "shutdown" or command == "refresh":
       server.stop()
     return 'OK'
