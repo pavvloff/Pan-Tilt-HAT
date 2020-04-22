@@ -1,6 +1,6 @@
 import argparse
 from pth.camera import runCameraView
-from pth.updater import runUpdaterView, command
+from pth.updater import runUpdaterView
 from pth.custombottle import StoppableServer
 from bottle import Bottle
 import threading
