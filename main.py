@@ -4,6 +4,7 @@ from pth.updater import runUpdaterView
 from pth.custombottle import StoppableServer
 from bottle import Bottle
 import threading
+import time
 
 def main():
   parser = argparse.ArgumentParser(description='Run the camera software.')
@@ -19,7 +20,12 @@ def main():
   app.run(server=server)
 
   print(server.command)
-  platform.command = 'exit'
+  try:
+    # Trying to peacefully 
+    platform.command = 'exit'
+    time.sleep(0.2)
+  except AttributeError as er:
+    pass
 
   if server.command == "refresh":
     exit(255)

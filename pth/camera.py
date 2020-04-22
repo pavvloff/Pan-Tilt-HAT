@@ -144,8 +144,6 @@ platform = None
 
 def runCameraView(app, root):
 
-  global platform
-
   platform = PlatformControl()
   platform.start()
 
@@ -163,7 +161,6 @@ def runCameraView(app, root):
     
   @app.post('/cmd')
   def cmd():
-    global platform
     platform.command = bottle.request.body.read().decode()
     if platform.command not in frozenset(['stop', 'up', 'down', 'left', 'right', 'recenter', 'exit']):
       platform.command = 'stop'
