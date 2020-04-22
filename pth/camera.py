@@ -60,6 +60,9 @@ class Stepper:
     elif self.speed < 0:
       self.speed = 0.0
       self.moving = False
+    else:
+      self.speed = 0.0
+      self.moving = False
   def isMoving(self):
     return self.moving
   def recenter(self):
@@ -101,7 +104,6 @@ class PlatformControl(threading.Thread):
     self.horizontal.update(dtime)
 
   def moveMotor(self):
-    print('Moving motor: %s %s' % (int(round(self.vertical.value)), int(round(self.horizontal.value))))
     v_move = self.vertical.isMoving()
     h_move = self.horizontal.isMoving()
 
