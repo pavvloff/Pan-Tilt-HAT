@@ -20,6 +20,6 @@ class StoppableServer(ServerAdapter):
 
   def stop(self):
     print('stopping server in 0.5...')
-    t = Timer(0.5, stopServer, server=self.server)
+    t = Timer(0.5, stopServer, kwargs={'server':self.server})
     t.start()
     
