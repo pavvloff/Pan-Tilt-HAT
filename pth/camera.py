@@ -5,14 +5,15 @@ import PCA9685
 import threading
 import time
 import os.path as path
+import math
 
 HORIZONTAL_MOTOR = 1
 VERTICAL_MOTOR = 0
 I2C_ADDRESS = 0x40
 
 DEFAULT_FREQ = 50
-MIN_VAL = int(floor(4096 * 0.01)) # 0.5 ms of 50 ms interval
-MAX_VAL = int(floor(4096 * 0.05)) # 2.5 ms of 50 ms interval
+MIN_VAL = int(math.floor(4096 * 0.01)) # 0.5 ms of 50 ms interval
+MAX_VAL = int(math.floor(4096 * 0.05)) # 2.5 ms of 50 ms interval
 
 class Stepper:
   def __init__(self, min_val = MIN_VAL, max_val = MAX_VAL, max_speed = (MAX_VAL - MIN_VAL)/3.0, acceleration = 5.0):

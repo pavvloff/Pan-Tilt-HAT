@@ -2,7 +2,7 @@
 
 RESTART=1
 
-while [ $RESTART -gt 0 ];
+while [ $RESTART -lt 0 ];
 do
   echo 'updating code...'
   git remote update
