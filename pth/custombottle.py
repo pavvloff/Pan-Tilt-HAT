@@ -3,7 +3,7 @@ from threading import Timer
 
 def stopServer(server = None):
   print('stopping server now...')
-  server.server_close()
+  server.shutdown()
   print('closed')
 
 class StoppableServer(ServerAdapter):
