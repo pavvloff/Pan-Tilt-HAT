@@ -18,8 +18,7 @@ def main():
   runUpdaterView(app, server)
 
   app.run(server=server)
-
-  print(server.command)
+  
   platform.command = 'exit'
   time.sleep(0.2)
 
