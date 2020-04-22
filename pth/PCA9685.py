@@ -57,7 +57,9 @@ class PCA9685:
             motor0 & 0xFF, (motor0 >> 8) & 0x0F,
             0, 0,
             motor1 & 0xFF, (motor1 >> 8) & 0x0F]
-    self.bus.write_i2c_block_data(self.address, self.__LED0_ON_L, data)
+    for i in range(len(data)):
+      self.write(self.__LED0_ON_L + i, data[i])
+    #self.bus.write_i2c_block_data(self.address, self.__LED0_ON_L, data)
     
   def start(self):
     self.write(self.__MODE2, 0x04)
