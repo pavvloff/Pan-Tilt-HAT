@@ -86,6 +86,7 @@ class PlatformControl(threading.Thread):
     self.horizontal.update(dtime)
 
   def moveMotor(self):
+    print('Moving motor: %s %s' % [int(round(self.vertical.value)), int(round(self.horizontal.value))])
     v_move = self.vertical.isMoving()
     h_move = self.horizontal.isMoving()
 
@@ -114,7 +115,7 @@ class PlatformControl(threading.Thread):
         self.processCommand(dtime)
         self.moveMotor()
         start = cur
-        time.sleep(self.sleep_interval)
+        time.sleep(max(self.sleep_interval, 0.1))
     finally:
       self.stopMotor()
 
