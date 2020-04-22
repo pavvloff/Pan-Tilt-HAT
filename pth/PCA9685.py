@@ -21,6 +21,7 @@ class PCA9685:
   def __init__(self, address=0x40, freq = 50):
     self.bus = smbus.SMBus(1)
     self.address = address
+    self.write(self.__MODE1, 0x00)
     self.stop()
     self.setPWMFreq(freq)
 	
@@ -57,9 +58,7 @@ class PCA9685:
             motor0 & 0xFF, (motor0 >> 8) & 0x0F,
             0, 0,
             motor1 & 0xFF, (motor1 >> 8) & 0x0F]
-    for i in range(len(data)):
-      self.write(self.__LED0_ON_L + i, data[i])
-    #self.bus.write_i2c_block_data(self.address, self.__LED0_ON_L, data)
+    self.bus.write_i2c_block_data(self.address, self.__LED0_ON_L, data)
     
   def start(self):
     self.write(self.__MODE2, 0x04)
