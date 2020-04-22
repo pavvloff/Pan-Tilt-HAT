@@ -86,7 +86,7 @@ class PlatformControl(threading.Thread):
     self.horizontal.update(dtime)
 
   def moveMotor(self):
-    print('Moving motor: %s %s' % (int(round(self.vertical.value)), int(round(self.horizontal.value)))
+    print('Moving motor: %s %s' % (int(round(self.vertical.value)), int(round(self.horizontal.value))))
     v_move = self.vertical.isMoving()
     h_move = self.horizontal.isMoving()
 
