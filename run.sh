@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RESTART=1
+RESTART=-1
 
 while [ $RESTART -lt 0 ];
 do
