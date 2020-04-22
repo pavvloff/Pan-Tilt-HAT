@@ -86,7 +86,7 @@ class PlatformControl(threading.Thread):
     self.command = "stop"
 
   def startPlatform(self):
-    self.pwm = PCA9685.PCA9685(address = I2C_ADDRESS, freq = freq)
+    self.pwm = PCA9685.PCA9685(address = I2C_ADDRESS, freq = self.freq)
 
   def processCommand(self, dtime):
     if self.command == 'up':
