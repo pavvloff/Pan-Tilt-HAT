@@ -1,5 +1,5 @@
 import argparse
-from pth.camera import runCameraView
+from pth.camera import runCameraView, platform
 from pth.updater import runUpdaterView
 from pth.custombottle import StoppableServer
 from bottle import Bottle
@@ -19,6 +19,8 @@ def main():
   app.run(server=server)
 
   print(server.command)
+  platform.command = 'exit'
+
   if server.command == "refresh":
     exit(255)
   else:

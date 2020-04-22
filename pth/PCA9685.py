@@ -22,7 +22,6 @@ class PCA9685:
     self.bus = smbus.SMBus(1)
     self.address = address
     self.write(self.__MODE1, 0x00)
-    self.stop()
     self.setPWMFreq(freq)
 	
   def write(self, reg, value):
