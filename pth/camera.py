@@ -10,8 +10,12 @@ HORIZONTAL_MOTOR = 1
 VERTICAL_MOTOR = 0
 I2C_ADDRESS = 0x40
 
+DEFAULT_FREQ = 50
+MIN_VAL = int(floor(4096 * 0.01)) # 0.5 ms of 50 ms interval
+MAX_VAL = int(floor(4096 * 0.05)) # 2.5 ms of 50 ms interval
+
 class Stepper:
-  def __init__(self, min_val = 400, max_val = 1800, max_speed = 3, acceleration = 0.1):
+  def __init__(self, min_val = MIN_VAL, max_val = MAX_VAL, max_speed = (MAX_VAL - MIN_VAL)/3.0, acceleration = 5.0):
     assert min_val >= 0
     assert max_val > min_val
     assert max_speed > 0
@@ -23,23 +27,27 @@ class Stepper:
     self.max_speed = max_speed
     self.acceleration = acceleration
     self.moving = False
-  def update(self):
-    self.value = min(self.max_val, max(self.min_val, self.value + self.speed))
+  def update(self, dtime):
+    spd = self.speed * dtime
+    self.value = min(self.max_val, max(self.min_val, self.value + spd))
     return self.value
-  def more(self):
+  def more(self, dtime):
+    acc = self.acceleration * dtime
     self.moving = True
-    self.speed = min(self.max_speed, max(-self.max_speed, self.speed + self.acceleration))
-  def less(self):
+    self.speed = min(self.max_speed, max(-self.max_speed, self.speed + acc))
+  def less(self, dtime):
+    acc = self.acceleration * dtime
     self.moving = True
-    self.speed = min(self.max_speed, max(-self.max_speed, self.speed - self.acceleration))
-  def slowDown(self):
-    if self.speed > self.acceleration:
-      self.speed -= self.acceleration
+    self.speed = min(self.max_speed, max(-self.max_speed, self.speed - acc))
+  def slowDown(self, dtime):
+    acc = self.acceleration * dtime
+    if self.speed > acc:
+      self.speed -= acc
     elif self.speed > 0:
       self.speed = 0.0
       self.moving = False
-    elif self.speed < -self.acceleration:
-      self.speed += self.acceleration
+    elif self.speed < -acc:
+      self.speed += acc
     elif self.speed < 0:
       self.speed = 0.0
       self.moving = False
@@ -48,76 +56,75 @@ class Stepper:
 
 
 class PlatformControl(threading.Thread):
-  def __init__(self, freq = 50, min_v = 0, max_v = 2500, min_h = 0, max_h = 2500):
+  def __init__(self, freq = 50):
     super(PlatformControl, self).__init__()
-    self.freq = freq
     self.sleep_interval = 1.0 / freq
-    self.horizontal = Stepper(min_val = min_h, max_val = max_h)
-    self.vertical = Stepper(min_val = min_v, max_val = max_v)
-    self.pwm = PCA9685.PCA9685(I2C_ADDRESS)
-    self.pwm.setPWMFreq(self.freq)
+    self.horizontal = Stepper()
+    self.vertical = Stepper()
+    self.pwm = PCA9685.PCA9685(address = I2C_ADDRESS, freq = freq)
     self.moving = False
 
     self.daemon = True
     self.command = "stop"
 
-  def processCommand(self):
+  def processCommand(self, dtime):
     if self.command == 'up':
-      self.vertical.less()
+      self.vertical.less(dtime)
     elif self.command == 'down':
-      self.vertical.more()
+      self.vertical.more(dtime)
     else:
-      self.vertical.slowDown()
+      self.vertical.slowDown(dtime)
+    self.vertical.update(dtime)
 
     if self.command == 'left':
-      self.horizontal.more()
+      self.horizontal.more(dtime)
     elif self.command == 'right':
-      self.horizontal.less()
+      self.horizontal.less(dtime)
     else:
-      self.horizontal.slowDown()
+      self.horizontal.slowDown(dtime)
+    self.horizontal.update(dtime)
 
   def moveMotor(self):
     v_move = self.vertical.isMoving()
     h_move = self.horizontal.isMoving()
 
-    self.vertical.update()
-    self.horizontal.update()
-
     if (v_move or h_move):
       self.startMotor()
-
-    self.pwm.setServoPulse(HORIZONTAL_MOTOR, int(round(self.horizontal.value)))
-    self.pwm.setServoPulse(VERTICAL_MOTOR, int(round(self.vertical.value)))
+      self.pwm.setBlockPWM(int(round(self.vertical.value)), int(round(self.horizontal.value)))
+    else:
+      self.stopMotor()
 
   def stopMotor(self):
     if self.moving:
-      self.pwm.exit_PCA9685()
+      self.pwm.stop()
       self.moving = False
 
   def startMotor(self):
     if not self.moving:
-      self.pwm.start_PCA9685()
+      self.pwm.start()
       self.moving = True
 
   def run(self):
+    start = time.time()
     try:
       while self.command != 'exit':
-        self.processCommand()
+        cur = time.time()
+        dtime = cur - start
+        self.processCommand(dtime)
         self.moveMotor()
+        start = cur
         time.sleep(self.sleep_interval)
     finally:
       self.stopMotor()
 
 platform = None
 
-def runCameraView(port = 8001, root = '.', freq = 50):
+def runCameraView(app, freq = 50):
 
   global platform
 
   platform = PlatformControl(freq)
-  platform.start()
-
-  app = bottle.Bottle()
+  #platform.start()
 
   @app.get('/')
   def index():
@@ -139,6 +146,4 @@ def runCameraView(port = 8001, root = '.', freq = 50):
       platform.command = 'stop'
     print(platform.command)
     return 'OK'
-
-  app.run(host='0.0.0.0', port=port)
 

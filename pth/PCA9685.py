@@ -10,10 +10,6 @@ import smbus
 
 class PCA9685:
 
-  # Registers/etc.
-  __SUBADR1            = 0x02
-  __SUBADR2            = 0x03
-  __SUBADR3            = 0x04
   __MODE1              = 0x00
   __MODE2              = 0x01
   __PRESCALE           = 0xFE
@@ -21,32 +17,20 @@ class PCA9685:
   __LED0_ON_H          = 0x07
   __LED0_OFF_L         = 0x08
   __LED0_OFF_H         = 0x09
-  __ALLLED_ON_L        = 0xFA
-  __ALLLED_ON_H        = 0xFB
-  __ALLLED_OFF_L       = 0xFC
-  __ALLLED_OFF_H       = 0xFD
 
-  def __init__(self, address=0x40, freq = 50, debug=False):
+  def __init__(self, address=0x40, freq = 50):
     self.bus = smbus.SMBus(1)
     self.address = address
-    self.debug = debug
-    self.freq = freq
-    if (self.debug):
-      print("Reseting PCA9685")
-    self.write(self.__MODE1, 0x00)
+    self.stop()
+    self.setPWMFreq(self.freq)
 	
   def write(self, reg, value):
     "Writes an 8-bit value to the specified register/address"
     self.bus.write_byte_data(self.address, reg, value)
-    if (self.debug):
-      print("I2C: Write 0x%02X to register 0x%02X" % (value, reg))
 	  
   def read(self, reg):
     "Read an unsigned byte from the I2C device"
-    result = self.bus.read_byte_data(self.address, reg)
-    if (self.debug):
-      print("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" % (self.address, result & 0xFF, reg))
-    return result
+    return self.bus.read_byte_data(self.address, reg)
 	
   def setPWMFreq(self, freq):
     "Sets the PWM frequency"
@@ -55,51 +39,29 @@ class PCA9685:
     prescaleval /= 4096.0       # 12-bit
     prescaleval /= float(self.freq)
     prescaleval -= 1.0
-    if (self.debug):
-      print("Setting PWM frequency to %d Hz" % self.freq)
-      print("Estimated pre-scale: %d" % prescaleval)
-    prescale = math.floor(prescaleval + 0.5)
-    if (self.debug):
-      print("Final pre-scale: %d" % prescale)
+    prescale = int(math.floor(prescaleval + 0.5))
 
     oldmode = self.read(self.__MODE1);
     newmode = (oldmode & 0x7F) | 0x10        # sleep
     self.write(self.__MODE1, newmode)        # go to sleep
-    self.write(self.__PRESCALE, int(math.floor(prescale)))
+    self.write(self.__PRESCALE, prescale)
     self.write(self.__MODE1, oldmode)
     time.sleep(0.005)
     self.write(self.__MODE1, oldmode | 0x80)
 
-  def setPWM(self, channel, on, off):
-    "Sets a single PWM channel"
-    self.write(self.__LED0_ON_L+4*channel, on & 0xFF)
-    self.write(self.__LED0_ON_H+4*channel, on >> 8)
-    self.write(self.__LED0_OFF_L+4*channel, off & 0xFF)
-    self.write(self.__LED0_OFF_H+4*channel, off >> 8)
-    if (self.debug):
-      print("channel: %d  LED_ON: %d LED_OFF: %d" % (channel,on,off))
-	  
-  def setServoPulse(self, channel, pulse):
-    "Sets the Servo Pulse,The PWM frequency must be 50HZ"
-    pulse = pulse*4096*self.freq/1000000        #PWM frequency is 50HZ,the period is 20000us
-    self.setPWM(channel, 0, pulse)
+  def setBlockPWM(self, motor0, motor1):
+    assert motor0 >= 0
+    assert motor1 >= 0
+    assert motor0 < 4096
+    assert motor1 < 4096
+    data = [0, 0,
+            motor0 & 0xFF, (motor0 >> 8) & 0x0F,
+            0, 0,
+            motor1 & 0xFF, (motor1 >> 8) & 0x0F]
+    self.bus.write_i2c_block_data(self.address, self.__LED0_ON_L, data)
     
-  def start_PCA9685(self):
+  def start(self):
     self.write(self.__MODE2, 0x04)
-    #Just restore the stopped state that should be set for exit_PCA9685
     
-  def exit_PCA9685(self):
-    self.write(self.__MODE2, 0x00)#Please use initialization or __MODE2 =0x04
-    
-if __name__=='__main__':
-  pwm = PCA9685(0x40, debug=True)
-  pwm.setPWMFreq(50)
-  while True:
-   # setServoPulse(2,2500)
-    for i in range(500,2500,10):  
-      pwm.setServoPulse(0,i)   
-      time.sleep(0.02)     
-    
-    for i in range(2500,500,-10):
-      pwm.setServoPulse(0,i) 
-      time.sleep(0.02)  
+  def stop(self):
+    self.write(self.__MODE2, 0x00)

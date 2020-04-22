@@ -2,11 +2,13 @@
 
 RESTART=1
 
-while [ $RESTART ];
+while [ $RESTART -gt 0 ];
 do
-  echo 'restarting...'
-  RESTART=0
-  sudo python main.py || RESTART=1
+  echo 'updating code...'
+  git remote update
+  git pull origin
+  sudo python main.py
+  RESTART=$?
 done
 
-echo 'exited.'
+echo 'exited'

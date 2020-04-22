@@ -13,14 +13,20 @@ $(function(){
   var BUTTON_DOWN   = isTouchDevice ? "touchstart" : "mousedown";
   var BUTTON_UP     = isTouchDevice ? "touchend"   : "mouseup";
 
-  $("button").bind(BUTTON_DOWN,function(){
+  $(".camcontrol").bind(BUTTON_DOWN,function(){
     $.post("/cmd",this.id,function(data,status){});
   });
 
-  $("button").bind(BUTTON_UP,function(){
+  $(".camcontrol").bind(BUTTON_UP,function(){
     $.post("/cmd","stop",function(data,status){});
   });
+
+  $(".srvcontrol").bind(BUTTON_UP,function(){
+    $.post("/srvcmd",this.id,function(data,status){});
+  });
 });
+
+
     
     </script>
 
@@ -51,14 +57,24 @@ $(function(){
     <tr>
       <td>
         <div align="center">
-          <button id="up" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-up"></button>
+          <script>
+             var ip_addr = document.location.hostname;
+             document.write("<img width=\"320\" height=\"240\" src=\"http://" + ip_addr + ":8080/?action=stream\">");
+          </script>
         </div>
         <div align="center">
-          <button id='left' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-left"></button>
+          <button id="up" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-up camcontrol"></button>
+        </div>
+        <div align="center">
+          <button id='left' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-left camcontrol"></button>
           <!--<button id='stop' class="btn btn-lg btn-primary glyphicon glyphicon-stop"></button>-->
-          <button id='down' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down"></button>
-          <button id='right' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-right"></button>
+          <button id='down' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down camcontrol"></button>
+          <button id='right' class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-right camcontrol"></button>
         </div align="center">
+        <div align="center">
+          <button id="refresh" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-refresh srvcontrol"></button>
+          <button id="shutdown" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down srvcontrol"></button>
+        </div>
         <!-- </div> -->
       </td>
     </tr>
