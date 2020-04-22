@@ -77,14 +77,16 @@ class Stepper:
 class PlatformControl(threading.Thread):
   def __init__(self, freq = 50):
     super(PlatformControl, self).__init__()
+    self.freq = freq
     self.sleep_interval = 1.0 / freq
     self.horizontal = Stepper()
     self.vertical = Stepper()
-    self.pwm = PCA9685.PCA9685(address = I2C_ADDRESS, freq = freq)
     self.moving = False
-
     self.daemon = True
     self.command = "stop"
+
+  def startPlatform(self):
+    self.pwm = PCA9685.PCA9685(address = I2C_ADDRESS, freq = freq)
 
   def processCommand(self, dtime):
     if self.command == 'up':
@@ -112,8 +114,9 @@ class PlatformControl(threading.Thread):
     h_move = self.horizontal.isMoving()
 
     if (v_move or h_move):
-      self.startMotor()
       self.pwm.setBlockPWM(int(round(self.vertical.value)), int(round(self.horizontal.value)))
+      self.startMotor()
+      
     else:
       self.stopMotor()
 
@@ -128,6 +131,7 @@ class PlatformControl(threading.Thread):
       self.moving = True
 
   def run(self):
+    self.startPlatform()
     start = time.time()
     try:
       while self.command != 'exit':
@@ -140,11 +144,9 @@ class PlatformControl(threading.Thread):
     finally:
       self.stopMotor()
 
-platform = None
+platform = PlatformControl()
 
 def runCameraView(app, root):
-  global platform
-  platform = PlatformControl()
   platform.start()
 
   @app.get('/')
