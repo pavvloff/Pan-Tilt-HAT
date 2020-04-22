@@ -16,7 +16,7 @@ MIN_VAL = int(math.floor(4096 * 0.02)) # 1.0 ms of 50 ms interval
 MAX_VAL = int(math.floor(4096 * 0.06)) # 3.0 ms of 50 ms interval
 
 class Stepper:
-  def __init__(self, min_val = MIN_VAL, max_val = MAX_VAL, max_speed = (MAX_VAL - MIN_VAL)/3.0, acceleration = 5.0):
+  def __init__(self, min_val = MIN_VAL, max_val = MAX_VAL, max_speed = (MAX_VAL - MIN_VAL)/3.0, acceleration = 20.0):
     assert min_val >= 0
     assert max_val > min_val
     assert max_speed > 0
@@ -41,10 +41,14 @@ class Stepper:
         self.speed = 0
     return self.value
   def more(self, dtime):
+    if self.speed < 0:
+      self.speed = 0.0
     acc = self.acceleration * dtime
     self.moving = True
     self.speed = min(self.max_speed, max(-self.max_speed, self.speed + acc))
   def less(self, dtime):
+    if self.speed > 0:
+      self.speed = 0.0
     acc = self.acceleration * dtime
     self.moving = True
     self.speed = min(self.max_speed, max(-self.max_speed, self.speed - acc))
