@@ -125,7 +125,7 @@ def runCameraView(app, root):
   global platform
 
   platform = PlatformControl()
-  #platform.start()
+  platform.start()
 
   @app.get('/')
   def index():
