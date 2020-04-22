@@ -12,8 +12,8 @@ VERTICAL_MOTOR = 0
 I2C_ADDRESS = 0x40
 
 DEFAULT_FREQ = 50
-MIN_VAL = int(math.floor(4096 * 0.01)) # 0.5 ms of 50 ms interval
-MAX_VAL = int(math.floor(4096 * 0.05)) # 2.5 ms of 50 ms interval
+MIN_VAL = int(math.floor(4096 * 0.02)) # 1.0 ms of 50 ms interval
+MAX_VAL = int(math.floor(4096 * 0.06)) # 3.0 ms of 50 ms interval
 
 class Stepper:
   def __init__(self, min_val = MIN_VAL, max_val = MAX_VAL, max_speed = (MAX_VAL - MIN_VAL)/3.0, acceleration = 5.0):
@@ -30,7 +30,15 @@ class Stepper:
     self.moving = False
   def update(self, dtime):
     spd = self.speed * dtime
-    self.value = min(self.max_val, max(self.min_val, self.value + spd))
+    self.value += spd
+    if self.value < self.min_val:
+      self.value = self.min_val
+      if self.speed < 0:
+        self.speed = 0
+    if self.value > self.max_val:
+      self.value = self.max_val
+      if self.speed > 0:
+        self.speed = 0
     return self.value
   def more(self, dtime):
     acc = self.acceleration * dtime
@@ -54,7 +62,10 @@ class Stepper:
       self.moving = False
   def isMoving(self):
     return self.moving
-
+  def recenter(self):
+    self.value = (self.max_val + self.min_val) / 2
+    self.speed = 0
+    self.moving = True
 
 class PlatformControl(threading.Thread):
   def __init__(self, freq = 50):
@@ -73,6 +84,8 @@ class PlatformControl(threading.Thread):
       self.vertical.less(dtime)
     elif self.command == 'down':
       self.vertical.more(dtime)
+    elif self.command == 'recenter':
+      self.vertical.recenter()
     else:
       self.vertical.slowDown(dtime)
     self.vertical.update(dtime)
@@ -81,6 +94,8 @@ class PlatformControl(threading.Thread):
       self.horizontal.more(dtime)
     elif self.command == 'right':
       self.horizontal.less(dtime)
+    elif self.command == 'recenter':
+      self.horizontal.recenter()
     else:
       self.horizontal.slowDown(dtime)
     self.horizontal.update(dtime)
@@ -115,7 +130,7 @@ class PlatformControl(threading.Thread):
         self.processCommand(dtime)
         self.moveMotor()
         start = cur
-        time.sleep(max(self.sleep_interval, 0.1))
+        time.sleep(min(self.sleep_interval, 0.1))
     finally:
       self.stopMotor()
 
@@ -144,7 +159,7 @@ def runCameraView(app, root):
   def cmd():
     global platform
     platform.command = bottle.request.body.read().decode()
-    if platform.command not in frozenset(['stop', 'up', 'down', 'left', 'right', 'exit']):
+    if platform.command not in frozenset(['stop', 'up', 'down', 'left', 'right', 'recenter', 'exit']):
       platform.command = 'stop'
     print(platform.command)
     return 'OK'
