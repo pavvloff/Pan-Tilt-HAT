@@ -22,7 +22,7 @@ class PCA9685:
     self.bus = smbus.SMBus(1)
     self.address = address
     self.stop()
-    self.setPWMFreq(self.freq)
+    self.setPWMFreq(freq)
 	
   def write(self, reg, value):
     "Writes an 8-bit value to the specified register/address"
@@ -34,10 +34,9 @@ class PCA9685:
 	
   def setPWMFreq(self, freq):
     "Sets the PWM frequency"
-    self.freq = freq
     prescaleval = 25000000.0    # 25MHz
     prescaleval /= 4096.0       # 12-bit
-    prescaleval /= float(self.freq)
+    prescaleval /= float(freq)
     prescaleval -= 1.0
     prescale = int(math.floor(prescaleval + 0.5))
 
