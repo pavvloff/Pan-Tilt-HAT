@@ -18,6 +18,7 @@ def main():
 
   app.run(server=server)
 
+  print(command)
   if command == "refresh":
     exit(-1)
   else:
