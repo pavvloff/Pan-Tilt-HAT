@@ -31,6 +31,6 @@ class ImageSaver(proc.Processor):
     pass
   def processItem(self, item):
     if not self.saved:
-      image = Image.frombytes(Image.RGB, self.resolution, item)
+      image = Image.frombytes("RGB", self.resolution, item)
       image.save(self.filename)
     return 1
