@@ -74,17 +74,19 @@ class Processing:
   The Sender thread is responsible for producing items that would be processed.
   The Processor thread is responsible for processing and writing the result to the shared value
   """
-  def __init__(self, senderClass = Sender, processorClass = Processor, sharedValueClass = lambda: mp.Value('i', 0)):
+  def __init__(self, senderClass = Sender, processorClass = Processor, sharedValueClass = lambda: mp.Value('i', 0), **kwargs):
     self.sharedValue = sharedValueClass()
     self.parentPipe, self.childPipe = mp.Pipe()
     self.finishEvent = mp.Event()
 
     self.sender = senderClass(
       parentPipe = self.parentPipe,
-      finishEvent = self.finishEvent)
+      finishEvent = self.finishEvent,
+      **kwargs)
     self.processor = processorClass(
       childPipe = self.childPipe,
-      sharedValue = self.sharedValue)
+      sharedValue = self.sharedValue,
+      **kwargs)
 
   def start(self):
     self.sender.start()
