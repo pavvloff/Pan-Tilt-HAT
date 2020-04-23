@@ -16,7 +16,7 @@ class ImageExtractor(proc.Sender):
     stream = io.BytesIO()
     self.camera.capture(stream, format='rgb')
     stream.seek(0)
-    return stream.readall()
+    return stream.read()
 
 
 class ImageSaver(proc.Processor):
