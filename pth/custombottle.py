@@ -18,8 +18,7 @@ class StoppableServer(ServerAdapter):
     self.server = make_server(self.host, self.port, handler, **self.options)
     self.server.serve_forever()
 
-  def stop(self, command):
-    self.command = command
+  def stop(self):
     print('stopping server in 0.5...')
     t = Timer(0.5, stopServer, kwargs={'server':self.server})
     t.start()

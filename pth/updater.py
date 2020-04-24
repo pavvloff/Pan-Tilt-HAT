@@ -1,16 +1,16 @@
 import bottle
 
-server = None
+callback = None
 
-def runUpdaterView(app, srv, root = '.'):
-  global server
-  server = srv
+def runUpdaterView(app, cb, root = '.'):
+  global callback
+  callback = cb
 
   @app.post('/srvcmd')
   def cmd():
-    global server
+    global callback
     command = bottle.request.body.read().decode()
     print(command)
     if command == "shutdown" or command == "refresh":
-      server.stop(command)
+      callback(command)
     return 'OK'

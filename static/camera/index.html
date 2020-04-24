@@ -24,9 +24,27 @@ $(function(){
   $(".srvcontrol").bind(BUTTON_UP,function(){
     $.post("/srvcmd",this.id,function(data,status){});
   });
+
+  createFrames();
 });
 
+function createFrames() {
+  var rows = 3;
+  var columns = 5;
+  var cell = "<td class=\"frame\"></td>";
+  var table = `<tr>${cell.repeat(columns)}</tr>`.repeat(rows);
+  $("#subframes").html(table);
+  window.setTimeout(refreshFrames, 1000);
+};
 
+
+function refreshFrames() {
+  $(".frame").empty();
+  $(".frame").html(function(index, old) {
+    return `<img src="/static/frame${ index }.jpg">`
+  });
+  window.setTimeout(refreshFrames, 1000);
+};
     
     </script>
 
@@ -57,10 +75,9 @@ $(function(){
     <tr>
       <td>
         <div align="center">
-          <script>
-             var ip_addr = document.location.hostname;
-             document.write("<img width=\"320\" height=\"240\" src=\"http://" + ip_addr + ":8080/?action=stream\">");
-          </script>
+          <table id="subframes">
+            
+          </table>
         </div>
         <div align="center">
           <button id="up" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-up camcontrol"></button>
@@ -79,6 +96,7 @@ $(function(){
           <button id="shutdown" class="btn btn-lg btn-primary glyphicon glyphicon-circle-arrow-down srvcontrol"></button>
         </div>
         <!-- </div> -->
+        
       </td>
     </tr>
   </table>
