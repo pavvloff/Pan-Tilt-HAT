@@ -8,6 +8,8 @@ from bottle import Bottle
 import threading
 import time
 
+stopcommand = 'exit'
+
 def main():
   parser = argparse.ArgumentParser(description='Run the camera software.')
   parser.add_argument('-s', '--static', type=str, help='Path to static files folder', default='.')
@@ -24,8 +26,6 @@ def main():
 
   app = Bottle()
   server = StoppableServer(host='0.0.0.0', port=8001)
-
-  stopcommand = 'exit'
 
   def stopcallback(command):
     global stopcommand 

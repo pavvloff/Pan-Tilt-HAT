@@ -41,7 +41,7 @@ function createFrames() {
 function refreshFrames() {
   $(".frame").empty();
   $(".frame").html(function(index, old) {
-    return `<img src="/static/frame${ index }.jpg?#${ new Date().getTime() }">`
+    return `<img src="/static/frame${ index }.jpg?t=${ new Date().getTime() }">`
   });
   window.setTimeout(refreshFrames, 1000);
 };
