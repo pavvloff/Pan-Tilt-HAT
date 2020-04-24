@@ -18,7 +18,7 @@ def main():
     processorClass = ImageSaver,
     resolution = (640, 480),
     outresolution = (160, 160),
-    outframes = (3, 5),
+    outframes = (5, 3),
     output = './static/frame')
   proc.start()
 
