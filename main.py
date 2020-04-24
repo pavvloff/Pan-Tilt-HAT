@@ -28,6 +28,7 @@ def main():
   stopcommand = 'exit'
 
   def stopcallback(command):
+    global stopcommand 
     proc.stop()
     server.stop()
     platform.command = 'exit'

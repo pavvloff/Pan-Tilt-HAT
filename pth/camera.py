@@ -155,6 +155,8 @@ def runCameraView(app, root):
     
   @app.route('/static/<filepath:path>')
   def server_static(filepath):
+    if filepath.endswith('jpg'):
+      bottle.response.set_header('Cache-Control', 'no-cache, must-revalidate')
     return bottle.static_file(path.join('/static/', filepath), root=root)
 
   @app.route('/fonts/<filepath:path>')
