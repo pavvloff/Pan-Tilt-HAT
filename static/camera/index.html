@@ -43,7 +43,7 @@ function refreshFrames() {
   $(".frame").html(function(index, old) {
     return `<img src="/static/frame${ index }.jpg?t=${ new Date().getTime() }">`
   });
-  window.setTimeout(refreshFrames, 1000);
+  window.setTimeout(refreshFrames, 10000);
 };
     
     </script>
