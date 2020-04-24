@@ -29,18 +29,18 @@ class ImageSaver(proc.Processor):
     self.outframes = kwargs.get('outframes')
     assert self.outframes[0] > 1
     assert self.outframes[1] > 1
-    self.saved = False
 
   def init(self):
     pass
   def processItem(self, item):
-    if not self.saved:
-      image = Image.frombytes("RGB", self.resolution, item)
-      for row in range(self.outframes[1]):
-        for column in range(self.outframes[0]):
-          x = (self.resolution[0] - self.outresolution[0]) // (self.outframes[0] - 1) * column
-          y = (self.resolution[1] - self.outresolution[1]) // (self.outframes[1] - 1) * row
-          cropped = image.crop((x, y, x + self.outresolution[0], y + self.outresolution[1]))
-          cropped.save(self.filename + str(i) + '.jpg')
+    image = Image.frombytes("RGB", self.resolution, item)
+    i = 0
+    for row in range(self.outframes[1]):
+      for column in range(self.outframes[0]):
+        x = (self.resolution[0] - self.outresolution[0]) // (self.outframes[0] - 1) * column
+        y = (self.resolution[1] - self.outresolution[1]) // (self.outframes[1] - 1) * row
+        cropped = image.crop((x, y, x + self.outresolution[0], y + self.outresolution[1]))
+        cropped.save(self.filename + str(i) + '.jpg')
+        i += 1
     time.sleep(1.0)
     return 1
