@@ -3,9 +3,6 @@ import picamera
 import processing as proc
 from PIL import Image
 import time
-import cv2
-import numpy as np
-
 
 class ImageExtractor(proc.Sender):
   """docstring for ImageExtractor"""
