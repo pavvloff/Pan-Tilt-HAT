@@ -1,6 +1,6 @@
 import io
 import picamera
-import processing as proc
+import pth.processing as proc
 from PIL import Image
 import time
 

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import bottle
-import PCA9685
+import pth.PCA9685
 import threading
 import time
 import os.path as path
