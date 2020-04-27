@@ -7,7 +7,7 @@ do
   echo 'updating code...'
   git remote update
   git pull origin
-  sudo python main.py
+  sudo python3 main.py
   RESTART=$?
   echo 'exit code: ' $RESTART
 done
