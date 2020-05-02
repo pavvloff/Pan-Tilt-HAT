@@ -53,7 +53,7 @@ class ImageClassifier(pc.Processor):
         # Prepare the data
         arr = np.fromiter(
           cropped.getdata(),
-          np.dtype(bytes),
+          np.dtype(np.uint8),
           count = self.outresolution[0] * self.outresolution[1] * 3)
         arr = np.reshape(arr, (1, self.outresolution[0], self.outresolution[1], 3))
         arr = arr.astype(np.dtype(float)) / 127.5 - 1.0
