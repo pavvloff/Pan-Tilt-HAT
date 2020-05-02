@@ -56,7 +56,7 @@ class ImageClassifier(pc.Processor):
         # Invoke the interpreter
         np.copyto(self.interpreter.tensor(self.input_index)(), arr)
         self.interpreter.invoke()
-        val = interpreter.get_tensor(self.output_index)[0][0]
+        val = self.interpreter.get_tensor(self.output_index)[0][0]
         # Store the results
         self.sharedValue[i] = val
         
