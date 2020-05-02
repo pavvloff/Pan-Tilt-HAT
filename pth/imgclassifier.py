@@ -51,11 +51,7 @@ class ImageClassifier(pc.Processor):
         cropped = image.crop((x, y, x + self.outresolution[0], y + self.outresolution[1]))
         cropped.save(self.filename + str(i) + '.jpg')
         # Prepare the data
-        arr = np.fromiter(
-          cropped.getdata(),
-          np.dtype(np.uint8),
-          count = self.outresolution[0] * self.outresolution[1] * 3)
-        arr = np.reshape(arr, (1, self.outresolution[0], self.outresolution[1], 3))
+        arr = np.asarray(cropped).reshape((1, self.outresolution[0], self.outresolution[1], 3))
         arr = arr.astype(np.dtype(float)) / 127.5 - 1.0
         # Invoke the interpreter
         self.interpreter.set_tensor(self.input_index, arr)
