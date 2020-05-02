@@ -73,7 +73,7 @@ def imageClassification(app):
   global processor
   processor = pc.Processing(
     senderClass = ImageExtractor,
-    processorClass = ImageSaver,
+    processorClass = ImageClassifier,
     resolution = (640, 480),
     outresolution = (160, 160),
     outframes = (5, 3),
