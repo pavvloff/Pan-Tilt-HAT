@@ -6,6 +6,7 @@ import time
 import tensorflow as tf
 import numpy as np
 import multiprocessing as mp
+import ctypes
 
 class ImageExtractor(pc.Sender):
   """docstring for ImageExtractor"""
@@ -79,7 +80,7 @@ def imageClassification(app):
     outframes = (5, 3),
     output = './static/frame',
     model_path = './models/ninamodel.20200413.e100.tflite',
-    sharedValueClass = lambda: mp.Array(float, 5 * 3))
+    sharedValueClass = lambda: mp.Array(ctypes.c_float, 5 * 3))
   
   @app.get('/getvalues')
   def cmd():
