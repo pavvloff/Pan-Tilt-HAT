@@ -26,7 +26,7 @@ class ImageExtractor(pc.Sender):
 class ImageClassifier(pc.Processor):
   """docstring for ImageSaver"""
   def __init__(self, **kwargs):
-    super(ImageSaver, self).__init__(**kwargs)
+    super(ImageClassifier, self).__init__(**kwargs)
     self.filename = kwargs.get('output')
     self.resolution = kwargs.get('resolution')
     self.outresolution = kwargs.get('outresolution')
