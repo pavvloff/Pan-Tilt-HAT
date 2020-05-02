@@ -54,7 +54,7 @@ class ImageClassifier(pc.Processor):
         arr = np.asarray(cropped).reshape((1, self.outresolution[0], self.outresolution[1], 3))
         arr = arr.astype(np.dtype(float)) / 127.5 - 1.0
         # Invoke the interpreter
-        np.copyto(self.interpreter.tensor(self.input_index), arr)
+        np.copyto(self.interpreter.tensor(self.input_index)(), arr)
         self.interpreter.invoke()
         val = interpreter.get_tensor(self.output_index)[0][0]
         # Store the results
