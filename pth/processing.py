@@ -98,4 +98,4 @@ class Processing:
     self.processor.join()
 
   def getValue(self):
-    return self.sharedValue.value
+    return self.sharedValue

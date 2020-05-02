@@ -19,9 +19,12 @@ function createFrames() {
 
 
 function refreshFrames() {
-  $(".frame").empty();
-  $(".frame").html(function(index, old) {
-    return `<img src="/static/frame${ index }.jpg?t=${ new Date().getTime() }">`
+  $.get("/getvalues","",function(data, status){
+    let values = data.split(',').map(Number.parseFloat);
+    $(".frame").empty();
+    $(".frame").html(function(index, old) {
+      return `<p>${ values[index] }</p><p><img src="/static/frame${ index }.jpg?t=${ new Date().getTime() }"></p>`
+    });  
   });
 };
     
